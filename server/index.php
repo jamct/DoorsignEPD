@@ -1,4 +1,9 @@
 <?php
+//To activate productionMode (display entering deep sleep), set http-header X-productionMode: true
+#header("X-productionMode: true");
+//To stop productionMode (no deep sleep, web config), set http-header X-productionMode: false 
+#header("X-productionMode: false");
+
 error_reporting('E_ERROR');
 # Supported displays:
 # 2.9 inches: https://www.waveshare.com/wiki/2.9inch_e-Paper_Module
@@ -7,6 +12,8 @@ error_reporting('E_ERROR');
 const DISPLAYS = array(	"7.5"=>array("size"=>"640x384","rotate"=>"false"),
 						"4.2"=>array("size"=>"400x300","rotate"=>"false"),
 						"2.9"=>array("size"=>"296x128","rotate"=>"true"));
+						
+$DEFAULT_FONT = array("regular"=>realpath("./fonts/LiberationSans-Regular.ttf"),"bold"=>realpath("./fonts/LiberationSans-Bold.ttf"),"italic"=>realpath("./fonts/LiberationSans-Italic.ttf"));
 						
 if(strlen($_GET['scale']) AND is_numeric($_GET['scale'])){
 	$scale = $_GET['scale'];
