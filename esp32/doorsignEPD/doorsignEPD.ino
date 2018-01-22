@@ -134,7 +134,7 @@ void loop() {
     }
 
     client.print(String("GET ") + url + " HTTP/1.1\r\n" +
-                 "Host: " + host + "\r\n" +
+                 "Host: " + iot.configuration.get("ImageHost") + "\r\n" +
                  "Connection: close\r\n\r\n");
 
     int x = 0;
