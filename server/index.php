@@ -67,6 +67,8 @@ if(is_file($selectedContent)){
 		if(DISPLAYS[$displayType]['rotate'] == "true"){
 			$im = imagerotate($im, 90, 0);
 		}
+		$im = imagerotate($im, 0, 0);
+		
 		echo rawImage($im);
 	}
 
