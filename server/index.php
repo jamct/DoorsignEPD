@@ -14,7 +14,13 @@ const DISPLAYS = array(	"7.5"=>array("size"=>"640x384","rotate"=>"false"),
 						"2.9"=>array("size"=>"296x128","rotate"=>"true"));
 						
 $DEFAULT_FONT = array("regular"=>realpath("./fonts/LiberationSans-Regular.ttf"),"bold"=>realpath("./fonts/LiberationSans-Bold.ttf"),"italic"=>realpath("./fonts/LiberationSans-Italic.ttf"));
-						
+	
+if (!extension_loaded('gd')) {
+	echo "GD library is not installed. Please install GD on your server (http://php.net/manual/de/image.installation.php)";
+	exit;
+}
+
+
 if(strlen($_GET['scale']) AND is_numeric($_GET['scale'])){
 	$scale = $_GET['scale'];
 }else{
