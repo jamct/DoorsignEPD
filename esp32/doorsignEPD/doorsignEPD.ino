@@ -34,8 +34,8 @@ void setup() {
   const GFXfont* f = &FreeMonoBold9pt7b;
   display.setTextColor(GxEPD_BLACK);
 
-    iot.web.addInterfaceElement("ImageHost", "input", "Server to load image from:", "#configform", "ImageHost");
-    iot.web.addInterfaceElement("ImageAddress", "input", "Address to load image from:", "#configform", "ImageAddress");
+    iot.web.addInterfaceElement("ImageHost", "input", "Server to load image from (host name or IP address):", "#configform", "ImageHost");
+    iot.web.addInterfaceElement("ImageAddress", "input", "Address to load image from (path on server, starting with / e.g.: /index.php/?debug=false&[...] ):", "#configform", "ImageAddress");
     iot.web.addInterfaceElement("ImageWait", "input", "Sleep time (to next update) in seconds:", "#configform", "ImageWait");
     iot.web.addInterfaceElement("ProductionMode", "input", "Production mode  (if set to 'true', deep sleep will be activated, this config page will be down.)", "#configform", "ProductionMode");
 
