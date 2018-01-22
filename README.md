@@ -5,6 +5,7 @@ Images are generated on Webserver running PHP. Examples in this repository gener
 ## Getting started (Client)
 To start, you need the Arduino IDE with dependencies installed. Hardware setup is described here: ct.de/yrzv.
 
+
 ## Getting started (Server)
 The folder 'server' contains examples for content and outputs it in Byte-stream-format for ESP32. Copy the folder on a webserver with PHP installed and GD active (PHP >7.0).
 In the URL you tell the server what to show (and for which display size):
@@ -21,3 +22,7 @@ With Get-Parameter 'scale' you adjust size of the text. Set 'debug' to true to g
 
 ## More information
 This repository is part of article "Ausdauernde Infotafel" from German computer magazine "c't". Link: ct.de/yrzv
+
+## To do
+* add support for 3-color-display (b/w/r)
++ add better examples with real data (like ical-calendar)
