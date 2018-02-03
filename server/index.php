@@ -57,6 +57,8 @@ $displayHeight = explode("x",DISPLAYS[$displayType]['size'])[1];
 $im = imagecreate($displayWidth, $displayHeight);
 $background_color = ImageColorAllocate ($im, 255, 255, 255);
 $black = imagecolorallocate($im, 0, 0, 0);
+$red = imagecolorallocate($im, 255, 0, 0);
+
 if(is_file($selectedContent)){
 	include($selectedContent);
 }else{
@@ -75,11 +77,11 @@ if(is_file($selectedContent)){
 			$im = imagerotate($im, 90, 0);
 		}
 		$im = imagerotate($im, 0, 0);
-		
-		echo rawImage($im);
+        $color = DISPLAYS[$displayType]['color'];
+        echo rawImage($im, $color);
 	}
 
-function rawImage($im) {
+function rawImage($im, $color) {
 	$bits = "";
 	$bytes = "";
 	$pixelcount = 0;
@@ -88,7 +90,7 @@ function rawImage($im) {
 		for ($x = 0; $x < imagesx($im); $x++) {
 			
 			$rgb = imagecolorat($im, $x, $y);
-			if(DISPLAYS[$displayType]['color']) == "b/w/r") {
+			if($color == "b/w/r") {
 				// Create the bytestream for three-color displays
 				if ($rgb == 0) {
 					$bits = "0000" . $bits;
