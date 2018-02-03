@@ -18,6 +18,9 @@ Basecamp iot;
 #if DISPLAY_TYPE == '7.5'
 #include <GxGDEW075T8/GxGDEW075T8.cpp>      // 7.5" b/w
 #endif
+#if DISPLAY_TYPE == '7.5r'
+#include <GxGDEW075Z09/GxGDEW075Z09.cpp>    // 7.5" b/w/r
+#endif
 #include <GxIO/GxIO_SPI/GxIO_SPI.cpp>
 #include <GxIO/GxIO.cpp>
 #include <Fonts/FreeMonoBold9pt7b.h>
@@ -133,17 +136,18 @@ void loop() {
       return;
     }
 
-    client.print(String("GET ") + url + " HTTP/1.1\r\n" +
+    client.print(String("GET ") + url + " HTTP/1.0\r\n" +
                  "Host: " + iot.configuration.get("ImageHost") + "\r\n" +
                  "Connection: close\r\n\r\n");
+    // From HTTP1.1 on the client must support chunking. So switch back to HTTP1.0 here.
 
     int x = 0;
     int y = 0;
     int start = 0;
     bool data = false;
-    String header; 
+    String header;
 
-    display.eraseDisplay();
+    display.eraseDisplay(false);
 
     while (client.available()) {
       char byte = client.read();
@@ -154,7 +158,7 @@ void loop() {
 
       if (byte == '\n' && currentLineIsBlank && data == false) {
         data = true;
-        
+
         if(header.indexOf("X-productionMode: false")>0) {
             iot.configuration.set("ProductionMode", "false");
             production=false;
@@ -175,6 +179,41 @@ void loop() {
           start++;
         } else {
 
+#if DISPLAY_TYPE == '7.5r'
+          // The tree-color displays from WaveShare are using four bits for the color.
+          // So a byte contains the data for two pixels.
+          char nibble = byte & 0x0F;
+          if (nibble == 0) {
+            display.drawPixel(x, y, GxEPD_BLACK);
+          } else if (nibble == 4) {
+            display.drawPixel(x, y, GxEPD_RED);
+          } else {
+            display.drawPixel(x, y, GxEPD_WHITE);
+          }
+
+          x++;
+          if  (x == GxEPD_WIDTH) {
+            y++;
+            x = 0;
+          }
+
+          nibble = (byte >> 4) & 0x0F;
+          if (nibble == 0) {
+            display.drawPixel(x, y, GxEPD_BLACK);
+          } else if (nibble == 4) {
+            display.drawPixel(x, y, GxEPD_RED);
+          } else {
+            display.drawPixel(x, y, GxEPD_WHITE);
+          }
+
+          x++;
+          if  (x == GxEPD_WIDTH) {
+            y++;
+            x = 0;
+          }
+#else
+          // The b/w displays are using one bit per pixel.
+          // So a byte contais the data for eight pixels.
           for (int b = 7; b >= 0; b--) {
             int bit = bitRead(byte, b);
 
@@ -185,20 +224,19 @@ void loop() {
             }
 
             x++;
-
             if  (x == GxEPD_WIDTH) {
               y++;
               x = 0;
             }
           }
+#endif
         }
       }
     }
     display.update();
     Serial.println("Image loaded.");
-
-
   }
+
   if (production == true) {
 
     int SleepTime = iot.configuration.get("ImageWait").toInt();

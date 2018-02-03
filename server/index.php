@@ -9,9 +9,10 @@ error_reporting('E_ERROR');
 # 2.9 inches: https://www.waveshare.com/wiki/2.9inch_e-Paper_Module
 # 4.2 inches: https://www.waveshare.com/wiki/4.2inch_e-Paper_Module
 # 7.5 inches: https://www.waveshare.com/wiki/7.5inch_e-Paper_HAT
-const DISPLAYS = array(	"7.5"=>array("size"=>"640x384","rotate"=>"false"),
-						"4.2"=>array("size"=>"400x300","rotate"=>"false"),
-						"2.9"=>array("size"=>"296x128","rotate"=>"true"));
+const DISPLAYS = array(	"7.5r"=>array("size"=>"640x384","rotate"=>"false","color"=>"b/w/r"),
+						"7.5"=>array("size"=>"640x384","rotate"=>"false","color"=>"b/w"),
+						"4.2"=>array("size"=>"400x300","rotate"=>"false","color"=>"b/w"),
+						"2.9"=>array("size"=>"296x128","rotate"=>"true","color"=>"b/w"));
 						
 $DEFAULT_FONT = array("regular"=>realpath("./fonts/LiberationSans-Regular.ttf"),"bold"=>realpath("./fonts/LiberationSans-Bold.ttf"),"italic"=>realpath("./fonts/LiberationSans-Italic.ttf"));
 	
@@ -83,27 +84,46 @@ function rawImage($im) {
 	$bytes = "";
 	$pixelcount = 0;
 
-    for ($y = 0; $y < imagesy($im); $y++) {
+	for ($y = 0; $y < imagesy($im); $y++) {
 		for ($x = 0; $x < imagesx($im); $x++) {
 			
 			$rgb = imagecolorat($im, $x, $y);
-            $r = ($rgb >> 16) & 0xFF;
-            $g = ($rgb >> 8 ) & 0xFF;
-            $b = $rgb & 0xFF;
-            $gray = ($r + $g + $b) / 3;
-			
-            if ($gray < 0xFF) {
-				$bits .= "1";
-            }else {
-   				$bits .= "0";
+			if(DISPLAYS[$displayType]['color']) == "b/w/r") {
+				// Create the bytestream for three-color displays
+				if ($rgb == 0) {
+					$bits = "0000" . $bits;
+				} else if ($rgb == 2) {
+					$bits = "0100" . $bits;
+				} else {
+					$bits = "0011". $bits;
+				}
+
+				$pixelcount++;
+				if ($pixelcount % 2 == 0) {
+					$bytes .= pack('H*', str_pad(base_convert($bits, 2, 16),2, "0", STR_PAD_LEFT));
+					$bits = "";
+				}
 			}
-			
-			$pixelcount++;
-			if ($pixelcount % 8 == 0) {
-				$bytes .= pack('H*', str_pad(base_convert($bits, 2, 16),2, "0", STR_PAD_LEFT));
-				$bits = "";
+			else {
+				// Create the bytestream for two-color displays
+				$r = ($rgb >> 16) & 0xFF;
+				$g = ($rgb >> 8 ) & 0xFF;
+				$b = $rgb & 0xFF;
+				$gray = ($r + $g + $b) / 3;
+
+				if ($gray < 0xFF) {
+					$bits .= "1";
+				}else {
+					$bits .= "0";
+				}
+
+				$pixelcount++;
+				if ($pixelcount % 8 == 0) {
+					$bytes .= pack('H*', str_pad(base_convert($bits, 2, 16),2, "0", STR_PAD_LEFT));
+					$bits = "";
+				}
 			}
 		}
-    }
+	}
 	return $bytes;
 }
