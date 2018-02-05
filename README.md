@@ -16,6 +16,13 @@ In the URL you tell the server what to show (and for which display size):
 
 With Get-Parameter 'scale' you adjust size of the text. Set 'debug' to true to get a png-image and false for byte-Stream for ESP32.
 
+## Example contents
+* conference_room (agenda for a meeting room)
+* door_sign (list of people working in a room)
+* static_image (showing a random image (scaled to display size) from server/contents/static_image. Just put your image here)
+* weather_station (showing demo temperature an weather with icons)
+
+
 ## Dependencies
 
 - [GxEPD](https://github.com/ZinggJM/GxEPD), [Basecamp](https://github.com/merlinschumacher/Basecamp), [Adafruit_GFX](https://github.com/adafruit/Adafruit-GFX-Library)

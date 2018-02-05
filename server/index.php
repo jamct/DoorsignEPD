@@ -105,5 +105,8 @@ function rawImage($im) {
 			}
 		}
     }
+	
+	$size = strlen($bytes);
+	header("Content-length: $size");
 	return $bytes;
 }
