@@ -6,7 +6,7 @@
 	$fontSize = $scale;
 	
 	$cursorY += $fontSize*1.5;
-    imagettftext($im, $fontSize, 0, 10, $cursorY, $black, $DEFAULT_FONT['bold'], ROOM);
+    imagettftext($im, $fontSize, 0, 10, $cursorY, $red, $DEFAULT_FONT['bold'], ROOM);
 	$cursorY += 5;
 	imageline ($im , 10 , $cursorY , 1000 , $cursorY , $black );
 	

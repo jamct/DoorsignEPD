@@ -1,8 +1,9 @@
 #define DEBUG 1
 #include <Basecamp.hpp>
 
-//Define yout display type here: 2.9, 4.2 or 7.5 inches are supported:
-#define DISPLAY_TYPE '2.9'
+//Define your display type here: 2.9, 4.2 (bw and bwr) or 7.5 (bw or bwr) inches are supported:
+#define DISPLAY_TYPE '4.2bwr'
+
 #define FactorSeconds 1000000
 #define BASECAMP_NOMQTT
 
@@ -11,12 +12,28 @@ Basecamp iot;
 
 #if DISPLAY_TYPE == '2.9'
 #include <GxGDEH029A1/GxGDEH029A1.cpp>      // 2.9" b/w
+bool hasRed = false;
+String displayType = "2.9";
 #endif
 #if DISPLAY_TYPE == '4.2'
 #include <GxGDEW042T2/GxGDEW042T2.cpp>      // 4.2" b/w
+bool hasRed = false;
+String displayType = "4.2";
+#endif
+#if DISPLAY_TYPE == '4.2bwr'
+#include <GxGDEW042Z15/GxGDEW042Z15.cpp>       // 4.2" b/w/r
+bool hasRed = true;
+String displayType = "4.2bwr";
 #endif
 #if DISPLAY_TYPE == '7.5'
 #include <GxGDEW075T8/GxGDEW075T8.cpp>      // 7.5" b/w
+bool hasRed = false;
+String displayType = "7.5";
+#endif
+#if DISPLAY_TYPE == '7.5bwr'
+#include <GxGDEW075Z09/GxGDEW075Z09.cpp>      // 7.5" b/w/r
+bool hasRed = true;
+String displayType = "7.5bwr";
 #endif
 #include <GxIO/GxIO_SPI/GxIO_SPI.cpp>
 #include <GxIO/GxIO.cpp>
@@ -33,11 +50,10 @@ void setup() {
   display.init();
   const GFXfont* f = &FreeMonoBold9pt7b;
   display.setTextColor(GxEPD_BLACK);
-
-    iot.web.addInterfaceElement("ImageHost", "input", "Server to load image from (host name or IP address):", "#configform", "ImageHost");
-    iot.web.addInterfaceElement("ImageAddress", "input", "Address to load image from (path on server, starting with / e.g.: /index.php/?debug=false&[...] ):", "#configform", "ImageAddress");
-    iot.web.addInterfaceElement("ImageWait", "input", "Sleep time (to next update) in seconds:", "#configform", "ImageWait");
-    iot.web.addInterfaceElement("ProductionMode", "input", "Production mode  (if set to 'true', deep sleep will be activated, this config page will be down.)", "#configform", "ProductionMode");
+  iot.web.addInterfaceElement("ImageHost", "input", "Server to load image from (host name or IP address):", "#configform", "ImageHost");
+  iot.web.addInterfaceElement("ImageAddress", "input", "Address to load image from (path on server, starting with / e.g.: /index.php/?debug=false&[...] ):", "#configform", "ImageAddress");
+  iot.web.addInterfaceElement("ImageWait", "input", "Sleep time (to next update) in seconds:", "#configform", "ImageWait");
+  iot.web.addInterfaceElement("ProductionMode", "input", "Production mode  (if set to 'true', deep sleep will be activated, this config page will be down.)", "#configform", "ProductionMode");
 
 
   if (iot.configuration.get("ProductionMode") != "true" ) {
@@ -119,7 +135,7 @@ void setup() {
 void loop() {
 
   if (connection == true) {
-    String url =  iot.configuration.get("ImageAddress");
+    String url =  iot.configuration.get("ImageAddress") + "&display=" + displayType;
     boolean currentLineIsBlank = true;
     WiFiClient client;
     delay(5000);
@@ -141,27 +157,27 @@ void loop() {
     int y = 0;
     int start = 0;
     bool data = false;
-    String header; 
+    String header;
 
-    display.eraseDisplay();
+    display.eraseDisplay(true);
 
     while (client.available()) {
       char byte = client.read();
 
-      if(data == false){
+      if (data == false) {
         header +=  byte;
-       }
+      }
 
       if (byte == '\n' && currentLineIsBlank && data == false) {
         data = true;
-        
-        if(header.indexOf("X-productionMode: false")>0) {
-            iot.configuration.set("ProductionMode", "false");
-            production=false;
+
+        if (header.indexOf("X-productionMode: false") > 0) {
+          iot.configuration.set("ProductionMode", "false");
+          production = false;
         }
-         if(header.indexOf("X-productionMode: true")>0) {
-            iot.configuration.set("ProductionMode", "true");
-            production=true;
+        if (header.indexOf("X-productionMode: true") > 0) {
+          iot.configuration.set("ProductionMode", "true");
+          production = true;
         }
       }
       if (byte == '\n' && data == false) {
@@ -175,29 +191,54 @@ void loop() {
           start++;
         } else {
 
-          for (int b = 7; b >= 0; b--) {
-            int bit = bitRead(byte, b);
 
-            if (bit == 1) {
-              display.drawPixel(x, y, GxEPD_BLACK);
-            } else {
-              display.drawPixel(x, y, GxEPD_WHITE);
+          if (hasRed == true) {
+            for (int b = 7; b >= 0; b -= 2) {
+              int bit = bitRead(byte, b);
+              int bit2 = bitRead(byte, b - 1);
+
+              if ((bit == 1) && (bit2 == 1)) {
+                display.drawPixel(x, y, GxEPD_BLACK);
+              } else {
+                if ((bit == 0) && (bit2 == 1)) {
+                  display.drawPixel(x, y, GxEPD_RED);
+                } else {
+                  display.drawPixel(x, y, GxEPD_WHITE);
+                }
+              }
+              x++;
+
+              if  (x == GxEPD_WIDTH) {
+                y++;
+                x = 0;
+              }
             }
+          } else {
 
-            x++;
+            for (int b = 7; b >= 0; b--) {
+              int bit = bitRead(byte, b);
 
-            if  (x == GxEPD_WIDTH) {
-              y++;
-              x = 0;
+              if (bit == 1) {
+                display.drawPixel(x, y, GxEPD_BLACK);
+              } else {
+                display.drawPixel(x, y, GxEPD_WHITE);
+              }
+
+              x++;
+
+              if  (x == GxEPD_WIDTH) {
+                y++;
+                x = 0;
+              }
             }
           }
+
         }
+
       }
     }
     display.update();
     Serial.println("Image loaded.");
-
-
   }
   if (production == true) {
 

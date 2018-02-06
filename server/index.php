@@ -10,10 +10,14 @@ error_reporting('E_ERROR');
 # 4.2 inches: https://www.waveshare.com/wiki/4.2inch_e-Paper_Module
 # 7.5 inches: https://www.waveshare.com/wiki/7.5inch_e-Paper_HAT
 const DISPLAYS = array(	"7.5"=>array("size"=>"640x384","rotate"=>"false"),
+						"7.5bwr"=>array("size"=>"640x384","rotate"=>"false", "red"=>"true"),
 						"4.2"=>array("size"=>"400x300","rotate"=>"false"),
+						"4.2bwr"=>array("size"=>"400x300","rotate"=>"false", "red"=>"true"),
 						"2.9"=>array("size"=>"296x128","rotate"=>"true"));
 						
 $DEFAULT_FONT = array("regular"=>realpath("./fonts/LiberationSans-Regular.ttf"),"bold"=>realpath("./fonts/LiberationSans-Bold.ttf"),"italic"=>realpath("./fonts/LiberationSans-Italic.ttf"));
+
+const THRESHOLDS = array("black" => 150, "red" => 240);
 	
 if (!extension_loaded('gd')) {
 	echo "GD library is not installed. Please install GD on your server (http://php.net/manual/de/image.installation.php)";
@@ -55,7 +59,8 @@ $displayWidth = explode("x",DISPLAYS[$displayType]['size'])[0];
 $displayHeight = explode("x",DISPLAYS[$displayType]['size'])[1];
 $im = imagecreate($displayWidth, $displayHeight);
 $background_color = ImageColorAllocate ($im, 255, 255, 255);
-$black = imagecolorallocate($im, 0, 0, 0);
+$black = ImageColorAllocate($im, 0, 0, 0);
+$red = ImageColorAllocate($im, 0xFF, 0x00, 0x00);
 if(is_file($selectedContent)){
 	include($selectedContent);
 }else{
@@ -75,10 +80,10 @@ if(is_file($selectedContent)){
 		}
 		$im = imagerotate($im, 0, 0);
 		
-		echo rawImage($im);
+		echo rawImage($im, DISPLAYS[$displayType]['red'] );
 	}
 
-function rawImage($im) {
+function rawImage($im, $hasRed) {
 	$bits = "";
 	$bytes = "";
 	$pixelcount = 0;
@@ -91,22 +96,38 @@ function rawImage($im) {
             $g = ($rgb >> 8 ) & 0xFF;
             $b = $rgb & 0xFF;
             $gray = ($r + $g + $b) / 3;
-			
-            if ($gray < 0xFF) {
+						
+			if($hasRed == "true"){
+
+				if(($r >= THRESHOLDS['red']) && ($g < 50) && ($b <50)) {
+					$bits .= "01";
+				} else {
+					if ($gray < THRESHOLDS['black']) {
+						$bits .= "11";
+					}else {
+						$bits .= "00";
+					}
+				}
+			$pixelcount = $pixelcount+2;	
+			}else{
+				  if ($gray < THRESHOLDS['black']) {
 				$bits .= "1";
             }else {
    				$bits .= "0";
 			}
+				$pixelcount++;
+			}
 			
-			$pixelcount++;
+
 			if ($pixelcount % 8 == 0) {
 				$bytes .= pack('H*', str_pad(base_convert($bits, 2, 16),2, "0", STR_PAD_LEFT));
 				$bits = "";
 			}
 		}
     }
-	
+
 	$size = strlen($bytes);
+		
 	header("Content-length: $size");
 	return $bytes;
 }
