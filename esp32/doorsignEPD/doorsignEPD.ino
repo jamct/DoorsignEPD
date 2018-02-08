@@ -10,6 +10,11 @@
 Basecamp iot;
 #include <GxEPD.h>
 
+#if DISPLAY_TYPE == '1.5'
+#include <GxGDEP015OC1/GxGDEP015OC1.cpp>      // 1.54" b/w
+bool hasRed = false;
+String displayType = "1.5";
+#endif
 #if DISPLAY_TYPE == '2.9'
 #include <GxGDEH029A1/GxGDEH029A1.cpp>      // 2.9" b/w
 bool hasRed = false;
