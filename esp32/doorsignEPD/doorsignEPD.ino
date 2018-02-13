@@ -4,7 +4,7 @@
 //Define your display type here: 2.9, 4.2 (bw and bwr) or 7.5 (bw or bwr) inches are supported:
 #define DISPLAY_TYPE '4.2bwr'
 
-#define FactorSeconds 1000000
+#define FactorSeconds 1000000LL
 #define BASECAMP_NOMQTT
 
 Basecamp iot;
@@ -248,7 +248,7 @@ void loop() {
   if (production == true) {
 
     int SleepTime = iot.configuration.get("ImageWait").toInt();
-    esp_sleep_enable_timer_wakeup(SleepTime * FactorSeconds);
+    esp_sleep_enable_timer_wakeup(FactorSeconds * SleepTime);
     Serial.println("Going to sleep now...");
     esp_deep_sleep_start();
   } else {
