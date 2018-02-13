@@ -1,4 +1,5 @@
 <?php
+	checkFreeType();
 	// define your settings here
 	const ROOM = 'Raum 267';
 	const PERSONS = array("John Doe", "Jane Doe", "Otto Normalverbraucher");

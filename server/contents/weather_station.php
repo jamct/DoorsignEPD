@@ -1,4 +1,5 @@
 <?php
+	checkFreeType();
 	//Using Weather-Icons by Erik Flowers. All codes can be found here: https://github.com/erikflowers/weather-icons/blob/master/css/weather-icons.css
 	const ICONS = array("sunny"=>'&#xf00d;', "cloudy"=>'&#xf002;', "foggy"=>'&#xf003;', "windy"=>'&#xf085;', "snow"=>"&#xf00a;");
 	

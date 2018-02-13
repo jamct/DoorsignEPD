@@ -1,4 +1,5 @@
 <?php
+	checkFreeType();
 	// define your settings here
 	const ROOM = 'Raum 267';
 	const TIMES = array("7:30", "8:00", "8:30", "9:00", "9:30", "10:00", "10:30", "11:00", "11:30", "12:00");

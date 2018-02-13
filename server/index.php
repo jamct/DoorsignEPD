@@ -14,8 +14,8 @@ const DISPLAYS = array(	"7.5"=>array("size"=>"640x384","rotate"=>"false"),
 						"7.5bwr"=>array("size"=>"640x384","rotate"=>"false", "red"=>"true"),
 						"4.2"=>array("size"=>"400x300","rotate"=>"false"),
 						"4.2bwr"=>array("size"=>"400x300","rotate"=>"false", "red"=>"true"),
-                                                "2.9"=>array("size"=>"296x128","rotate"=>"true"),
-                                                "1.5"=>array("size"=>"200x200","rotate"=>"true"));
+                        "2.9"=>array("size"=>"296x128","rotate"=>"true"),
+                        "1.5"=>array("size"=>"200x200","rotate"=>"true"));
 
 $DEFAULT_FONT = array("regular"=>realpath("./fonts/LiberationSans-Regular.ttf"),"bold"=>realpath("./fonts/LiberationSans-Bold.ttf"),"italic"=>realpath("./fonts/LiberationSans-Italic.ttf"));
 
@@ -26,6 +26,14 @@ if (!extension_loaded('gd')) {
 	exit;
 }
 
+//Function to check if FreeType is installed. Not needed by static_image
+function checkFreeType(){
+	$gdInfo = gd_info();
+	if($gdInfo['FreeType Support'] != 1){
+		echo "FreeType is not enabled. FreeType is needed for creating text in images(http://php.net/manual/de/function.imagettftext.php)";
+		exit;
+	}
+}
 
 if(strlen($_GET['scale']) AND is_numeric($_GET['scale'])){
 	$scale = $_GET['scale'];
@@ -80,7 +88,11 @@ if(is_file($selectedContent)){
 		if(DISPLAYS[$displayType]['rotate'] == "true"){
 			$im = imagerotate($im, 90, 0);
 		}
+		
 		$im = imagerotate($im, 0, 0);
+		//if you are using an older version of GD library you have to rotate the image 360°. Otherwise you get a white image due to a bug in GD library. Uncomment next lines:
+		//$im = imagerotate($im, 180, 0);
+		//$im = imagerotate($im, 180, 0);
 		
 		echo rawImage($im, DISPLAYS[$displayType]['red'] );
 	}
@@ -133,3 +145,4 @@ function rawImage($im, $hasRed) {
 	header("Content-length: $size");
 	return $bytes;
 }
+?>
