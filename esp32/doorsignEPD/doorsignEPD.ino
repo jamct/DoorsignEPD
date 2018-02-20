@@ -248,7 +248,7 @@ void loop() {
   if (production == true) {
 
     int SleepTime = iot.configuration.get("ImageWait").toInt();
-    esp_sleep_enable_timer_wakeup(FactorSeconds * SleepTime);
+    esp_sleep_enable_timer_wakeup(FactorSeconds * (uint64_t)SleepTime);
     Serial.println("Going to sleep now...");
     esp_deep_sleep_start();
   } else {
