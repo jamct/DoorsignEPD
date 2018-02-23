@@ -1,11 +1,11 @@
 #define DEBUG 1
+#define BASECAMP_NOMQTT
 #include <Basecamp.hpp>
 
 //Define your display type here: 2.9, 4.2 (bw and bwr) or 7.5 (bw or bwr) inches are supported:
 #define DISPLAY_TYPE '4.2bwr'
 
 #define FactorSeconds 1000000LL
-#define BASECAMP_NOMQTT
 
 Basecamp iot;
 #include <GxEPD.h>
