@@ -3,7 +3,7 @@ Project to build digital doorsign based on ESP32, Waveshare E-Paper-Display (2.9
 Images are generated on Webserver running PHP. Examples in this repository generate a weather-station, a doorsign for an office and a doorsign for a conference room.
 
 ## Getting started (Client)
-To start, you need the Arduino IDE with dependencies installed. Hardware setup is described here: ct.de/yrzv.
+To start, you need the Arduino IDE with dependencies installed. Hardware setup is described here: [ct.de/yrzv](https://ct.de/yrzv).
 
 
 ## Getting started (Server)
@@ -29,7 +29,7 @@ With Get-Parameter 'scale' you adjust size of the text. Set 'debug' to true to g
 - [GxEPD](https://github.com/ZinggJM/GxEPD), [Basecamp](https://github.com/merlinschumacher/Basecamp), [Adafruit_GFX](https://github.com/adafruit/Adafruit-GFX-Library)
 
 ## More information
-This repository is part of article "Ausdauernde Infotafel" from German computer magazine "c't". Link: [ct.de/yrzv](ct.de/yrzv)
+This repository is part of article "Ausdauernde Infotafel" from German computer magazine "c't". Link: [ct.de/yrzv](https://ct.de/yrzv)
 
 ## To do
 + add better examples with real data (like ical-calendar)
