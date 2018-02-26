@@ -13,21 +13,23 @@ In the URL you tell the server what to show (and for which display size):
 * <address of server>/?debug=true&display=7.5&content=weather_station&scale=28 (displays a weather-station for a 7.5 inch display)
 * <address of server>/?debug=true&display=2.9&content=door_sign&scale=22 (displays a door-sign for a 2.9 inch display)
 * <address of server>/?debug=true&display=4.2&content=conference_room&scale=18 (displays a sign for a conference room for a 4.2 inch display)
+* <address of server>/?debug=true&display=4.2&content=door_sign_csv&room=A 111 (displays a sign for a room. Use data from a csv file or google spreadsheet. Works with different rooms.
 
 With Get-Parameter 'scale' you adjust size of the text. Set 'debug' to true to get a png-image and false for byte-Stream for ESP32. Parameter size is automatically added by ESP (depending on your display).
 
 ## Example contents
-* conference_room (agenda for a meeting room)
-* door_sign (list of people working in a room)
-* static_image (showing a random image (scaled to display size) from server/contents/static_image. Just put your image here)
-* weather_station (showing demo temperature an weather with icons)
+* `conference_room` (agenda for a meeting room)
+* `door_sign` (list of people working in a room)
+* `door_sign_csv` (list of people working in a room, information taken from a csv file or google spreadsheet)
+* `static_image` (showing a random image (scaled to display size) from server/contents/static_image. Just put your image here)
+* `weather_station` (showing demo temperature an weather with icons)
 
 ## Dependencies
 
 - [GxEPD](https://github.com/ZinggJM/GxEPD), [Basecamp](https://github.com/merlinschumacher/Basecamp), [Adafruit_GFX](https://github.com/adafruit/Adafruit-GFX-Library)
 
 ## More information
-This repository is part of article "Ausdauernde Infotafel" from German computer magazine "c't". Link: ct.de/yrzv
+This repository is part of article "Ausdauernde Infotafel" from German computer magazine "c't". Link: [ct.de/yrzv](ct.de/yrzv)
 
 ## To do
 + add better examples with real data (like ical-calendar)
