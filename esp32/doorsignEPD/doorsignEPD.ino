@@ -1,10 +1,14 @@
 #define DEBUG 1
 #include <Basecamp.hpp>
 
-//Define your display type here: 2.9, 4.2 (bw and bwr) or 7.5 (bw or bwr) inches are supported:
-#define DISPLAY_TYPE '4.2bwr'
+// Define your display type here: 2.9, 4.2 (bw and bwr) or 7.5 (bw or bwr) inches are supported:
+// Default: 4.2bwr
+#define DISPLAY_TYPE '4.2'
 
+# Default 5
 #define CHIP_SELECT 15
+
+// Default -1 (deactivated)
 #define STATUS_PIN 5
 
 #define FactorSeconds 1000000LL
