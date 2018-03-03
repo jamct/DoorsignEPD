@@ -4,6 +4,9 @@
 //Define your display type here: 2.9, 4.2 (bw and bwr) or 7.5 (bw or bwr) inches are supported:
 #define DISPLAY_TYPE '4.2bwr'
 
+#define CHIP_SELECT 15
+#define STATUS_PIN 5
+
 #define FactorSeconds 1000000LL
 #define BASECAMP_NOMQTT
 
@@ -44,15 +47,21 @@ String displayType = "7.5bwr";
 #include <GxIO/GxIO.cpp>
 #include <Fonts/FreeMonoBold9pt7b.h>
 
-GxIO_Class io(SPI, SS, 17, 16);
+GxIO_Class io(SPI, CHIP_SELECT, 17, 16);
 GxEPD_Class display(io, 16, 4);
 int value = 0;
 bool connection = false;
 bool production = false;
+bool setupMode  = false;
 
 void setup() {
   iot.begin();
   display.init();
+
+  if (STATUS_PIN >= 0){
+    pinMode(STATUS_PIN, OUTPUT);
+  }
+
   const GFXfont* f = &FreeMonoBold9pt7b;
   display.setTextColor(GxEPD_BLACK);
   iot.web.addInterfaceElement("ImageHost", "input", "Server to load image from (host name or IP address):", "#configform", "ImageHost");
@@ -71,14 +80,14 @@ void setup() {
     }
 
     if (iot.configuration.get("WifiConfigured") != "True") {
-
+      setupMode = true;
       display.fillScreen(GxEPD_WHITE);
       display.setRotation(1);
       display.setFont(f);
       display.setCursor(0, 0);
       display.println();
       display.println("Wifi not configured!");
-      display.println("Connect to hotspot 'ESP32' and open 192.168.4.1");
+      display.println("Connect to hotspot 'ESP32' with the secret '" + iot.configuration.get("APSecret") + "' and open 192.168.4.1");
       display.update();
     } else {
 
@@ -139,7 +148,10 @@ void setup() {
 
 void loop() {
 
-  if (connection == true) {
+  if (WiFi.status() == WL_CONNECTED) {
+    if (STATUS_PIN >= 0){
+      digitalWrite(5, HIGH);
+    }
     String url =  iot.configuration.get("ImageAddress") + "&display=" + displayType;
     boolean currentLineIsBlank = true;
     WiFiClient client;
@@ -179,10 +191,12 @@ void loop() {
         if (header.indexOf("X-productionMode: false") > 0) {
           iot.configuration.set("ProductionMode", "false");
           production = false;
+          Serial.println("ProductionMode set to false by server");
         }
         if (header.indexOf("X-productionMode: true") > 0) {
           iot.configuration.set("ProductionMode", "true");
           production = true;
+          Serial.println("ProductionMode set to true by server");
         }
       }
       if (byte == '\n' && data == false) {
@@ -245,13 +259,25 @@ void loop() {
     display.update();
     Serial.println("Image loaded.");
   }
-  if (production == true) {
+  if (
+      production == true ||               // Production mode
+      (
+        WiFi.status() != WL_CONNECTED &&  // Not connected to the WiFi network
+        setupMode == false                // Not in setup mode
+      )
+    ) {
 
     int SleepTime = iot.configuration.get("ImageWait").toInt();
     esp_sleep_enable_timer_wakeup(FactorSeconds * (uint64_t)SleepTime);
+    if (STATUS_PIN >= 0){
+      digitalWrite(5, LOW);
+    }
     Serial.println("Going to sleep now...");
     esp_deep_sleep_start();
   } else {
+    if (STATUS_PIN >= 0) {
+      digitalWrite(5, LOW);
+    }
     delay(5000);
     Serial.println("Setup: Not going to sleep. Use web config to setup.");
   }
