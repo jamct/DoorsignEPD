@@ -18,8 +18,14 @@
 #define BASECAMP_NOMQTT
 Basecamp iot;
 AsyncClient client;
-bool tcpClientConnected = false;
-bool tcpClientConnectionInProgress = false;
+
+volatile bool tcpClientConnected = false;             //* We are currently receiving data
+volatile bool tcpClientConnectionInProgress = false;  //* We are establishing a connection
+volatile bool requestDoneInPeriod = false;            //* We already received data in this period
+
+bool connection = false;                              //* WiFi connection established
+bool production = false;                              //* We are in production mode and will go to deep sleep
+bool setupMode  = false;                              //* Setup mode: The web interface has to be accessible. Not going to deep sleep
 
 #include <GxEPD.h>
 
@@ -59,10 +65,6 @@ String displayType = "7.5bwr";
 
 GxIO_Class io(SPI, CHIP_SELECT, 17, 16);
 GxEPD_Class display(io, 16, 4);
-
-bool connection = false;
-bool production = false;
-bool setupMode  = false;
 
 void setup() {
   iot.begin();
@@ -151,6 +153,7 @@ void setup() {
   }
 
   // Create client
+  client.setRxTimeout(10);            // 5 sec timeout
   client.onConnect(&onConnectHandler);
   client.onData(&onDataHandler);
   client.onDisconnect(&onDisconnectHandler);
@@ -171,7 +174,8 @@ void drawPixels(char *data, size_t len, boolean start){
   if (start){
     x = 0;
     y = 0;
-    display.eraseDisplay(true);
+    // Not required
+    //display.eraseDisplay(true);
   }
 
   Serial.println(String("Printing ") + len + " Bytes to the screen");
@@ -318,12 +322,13 @@ int16_t findEndHeader(char *buf, size_t len){
  * Called after the transmission is finished (error, connection closed, timeout)
  */
 void transmitDone(){
-  Serial.println("Transmit done");
+  Serial.println("transmitDone");
   if (STATUS_PIN >= 0){
     digitalWrite(5, LOW);
   }
   tcpClientConnected = false;
   tcpClientConnectionInProgress = false;
+  requestDoneInPeriod = true;
 }
 
 
@@ -332,7 +337,12 @@ void transmitDone(){
  */
 void loop() {
 
-  if (WiFi.status() == WL_CONNECTED && !tcpClientConnected && !tcpClientConnectionInProgress) {
+  if (
+    WiFi.status() == WL_CONNECTED &&
+    !tcpClientConnected &&
+    !tcpClientConnectionInProgress &&
+    !requestDoneInPeriod
+    ) {
       const int httpPort = 80;
       const char* host = iot.configuration.get("ImageHost").c_str();
       
@@ -344,21 +354,21 @@ void loop() {
       }    
     }
 
-  Serial.println(String("STAT") + production + " / " + WiFi.status() != WL_CONNECTED + " / " + !setupMode);
-  
+  requestDoneInPeriod = false;
   if (
-      production ||                         // Production mode
-      (
-        WiFi.status() != WL_CONNECTED &&    // Not connected to the WiFi network
-        !setupMode                          // Not in setup mode
-      )
+    !production ||                          // Not in production mode
+    tcpClientConnected ||                   // We are connected to the server
+    setupMode                               // We are in setup mode
     ) {
-    int SleepTime = iot.configuration.get("ImageWait").toInt();
-    esp_sleep_enable_timer_wakeup(FactorSeconds * (uint64_t)SleepTime);
-    Serial.println("Going to sleep now...");
-    esp_deep_sleep_start();
-  } else {
-    delay(20000);
-    Serial.println("Setup: Not going to sleep. Use web config to setup.");
-  }
+      delay(10000);
+      Serial.println("Not going to deep sleep. Reason:");
+      if (!production) Serial.println("Not in production mode");
+      if (tcpClientConnected) Serial.println("Ongoing connection");
+      if (setupMode) Serial.println("In setup mode");
+    } else {
+      int SleepTime = iot.configuration.get("ImageWait").toInt();
+      esp_sleep_enable_timer_wakeup(FactorSeconds * (uint64_t)SleepTime);
+      Serial.println("Going to deep sleep now...");
+      esp_deep_sleep_start();
+    }
 };
