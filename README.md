@@ -26,7 +26,7 @@ With Get-Parameter 'scale' you adjust size of the text. Set 'debug' to true to g
 
 ## Dependencies
 
-- [GxEPD](https://github.com/ZinggJM/GxEPD), [Basecamp](https://github.com/merlinschumacher/Basecamp), [Adafruit_GFX](https://github.com/adafruit/Adafruit-GFX-Library)
+- [GxEPD](https://github.com/ZinggJM/GxEPD), [Basecamp](https://github.com/merlinschumacher/Basecamp), [Adafruit_GFX](https://github.com/adafruit/Adafruit-GFX-Library), [AsyncTCP](https://github.com/me-no-dev/AsyncTCP)
 
 ## More information
 This repository is part of article "Ausdauernde Infotafel" from German computer magazine "c't". Link: [ct.de/yrzv](https://ct.de/yrzv)
