@@ -67,7 +67,12 @@ if(strlen($_GET['scale']) AND is_numeric($_GET['scale'])){
 
 $displayType = $_GET['display'];
 if(!isset(DISPLAYS[$displayType])){
-    echo ("Not a valid display size.");
+    echo ("Not a valid display size. <br />");
+    echo ("display=[");
+    foreach (array_keys(DISPLAYS) as $display_key){
+        echo ($display_key.", ");
+    }
+    echo ("]");
     exit;
 }
 
