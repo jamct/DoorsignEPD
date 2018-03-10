@@ -42,6 +42,15 @@ $DEFAULT_FONT = array(
     );
 */
 
+// Pixel clean fixed width Terminus font
+// for a crisp look deactivate antialising by adding a "-" in front of the color
+// and use the font sizes: 9, 12, 18 or 24
+// imagettftext($im, 9, 0, 10, 10, -$black, $DEFAULT_FONT['regular'], "your text");
+$TERMINUS_FONT = array(
+    "regular"=>realpath("./fonts/terminus/TerminusTTF-4.46.0.ttf"),
+    "bold"=>realpath("./fonts/terminus/TerminusTTF-Bold-4.46.0.ttf")
+);
+
 const THRESHOLDS = array("black" => 150, "color" => 240);
 
 if (!extension_loaded('gd')) {
