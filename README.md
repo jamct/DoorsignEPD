@@ -35,5 +35,5 @@ This repository is part of article "Ausdauernde Infotafel" from German computer 
 + add better examples with real data (like ical-calendar)
 
 ## New functions
-Support for black-white-yellow (bwy) displays! (4.2bwy works, 7.5bwy is untested)
-Support for red-black-white display!
++ Support for black-white-yellow (bwy) displays! (4.2bwy works, 7.5bwy is untested)
++ Support for red-black-white display!
