@@ -23,6 +23,7 @@ With Get-Parameter 'scale' you adjust size of the text. Set 'debug' to true to g
 * `door_sign_csv` (list of people working in a room, information taken from a csv file or google spreadsheet)
 * `static_image` (showing a random image (scaled to display size) from server/contents/static_image. Just put your image here)
 * `weather_station` (showing demo temperature an weather with icons)
+* `harry` (simple shoutbox script - allows users to post their own message on the display!)
 
 ## Dependencies
 
