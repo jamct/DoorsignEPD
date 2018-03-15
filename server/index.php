@@ -4,6 +4,9 @@
 //To stop productionMode (no deep sleep, web config), set http-header X-productionMode: false
 #header("X-productionMode: false");
 
+// Set the sleep interval for the doorsigns via the server
+#header("X-sleepInterval: 60 ");
+
 error_reporting('E_ERROR');
 # Supported displays:
 # 1.54 inches: https://www.waveshare.com/wiki/1.54inch_e-Paper_Module
