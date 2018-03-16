@@ -16,6 +16,14 @@
 
 #define FactorSeconds 1000000LL
 #define BASECAMP_NOMQTT
+
+// This is the upper limit for the sleep time set by the server to prevent accidentally letting the display sleep for several days
+#define MAX_SLEEP_TIME (60*60*24)
+
+// Encrypted setup WiFi network
+//Basecamp iot{Basecamp::SetupModeWifiEncryption::secured};
+
+// Unencrypted setup WiFi network (default)
 Basecamp iot;
 AsyncClient client;
 
@@ -26,6 +34,9 @@ volatile bool requestDoneInPeriod = false;            //* We already received da
 bool connection = false;                              //* WiFi connection established
 bool production = false;                              //* We are in production mode and will go to deep sleep
 bool setupMode  = false;                              //* Setup mode: The web interface has to be accessible. Not going to deep sleep
+
+String sleepIntervalHeader = "X-sleepInterval:";      //* Name of the header for the sleep interval
+long   sleepIntervalSetbyHeader = 0;                  //* Changed if the sleep interval is set by the server via the header
 
 #include <GxEPD.h>
 
@@ -273,6 +284,24 @@ void onDataHandler(void *r, AsyncClient *client, void *data, size_t len){
       production = true;
     }
     Serial.println(String("ProductionMode: ") + production);
+
+    // Let the user set the sleep interval via a HTTP-header
+    if (header.indexOf(sleepIntervalHeader) > 0){
+      int sleepStartIndex = header.indexOf(sleepIntervalHeader) + sleepIntervalHeader.length();
+      int sleepStopIndex = header.indexOf("\r\n", sleepStartIndex);
+      if (sleepStopIndex < 0){
+        // End of header, use length as delimiter
+        sleepStopIndex = endHeader;
+      }
+
+      // toInt() sets sleepIntervalSetbyHeader to zero in case of errors during the conversion
+      sleepIntervalSetbyHeader = header.substring(sleepStartIndex, sleepStopIndex).toInt();
+      if (sleepIntervalSetbyHeader > MAX_SLEEP_TIME){
+        Serial.println("Too long sleep time. Limiting...");
+        sleepIntervalSetbyHeader = MAX_SLEEP_TIME;
+      }
+      
+    }
     
     // Handle remaining data bytes. 4 bytes for \r\n\r\n separation
     drawPixels((char*)data+endHeader+4, len-endHeader-4, true);
@@ -376,8 +405,14 @@ void loop() {
       if (tcpClientConnected) Serial.println("Ongoing connection");
       if (setupMode) Serial.println("In setup mode");
     } else {
-      int SleepTime = iot.configuration.get("ImageWait").toInt();
-      esp_sleep_enable_timer_wakeup(FactorSeconds * (uint64_t)SleepTime);
+      if (sleepIntervalSetbyHeader > 0){
+        Serial.println(String("Using sleep interval set by header \"") + sleepIntervalHeader + "\":" + sleepIntervalSetbyHeader);
+        esp_sleep_enable_timer_wakeup(FactorSeconds * (uint64_t)sleepIntervalSetbyHeader);
+      } else {
+        // No sleep time set via header or invalid value
+        int SleepTime = iot.configuration.get("ImageWait").toInt();
+        esp_sleep_enable_timer_wakeup(FactorSeconds * (uint64_t)SleepTime);
+      }
       Serial.println("Going to deep sleep now...");
       esp_deep_sleep_start();
     }
