@@ -380,20 +380,24 @@ void loop() {
         return;
       } else {
         Serial.println("Wait till the client is connected");
+        tcpClientConnectionInProgress = true;
       }    
     }
 
   requestDoneInPeriod = false;
+  
   if (
     !production ||                          // Not in production mode
     tcpClientConnected ||                   // We are connected to the server
-    setupMode                               // We are in setup mode
+    setupMode ||                            // We are in setup mode
+    tcpClientConnectionInProgress           // Connection is currently being established
     ) {
-      delay(10000);
-      Serial.println("Not going to deep sleep. Reason:");
+      Serial.print("Not going to deep sleep. Reason: ");
       if (!production) Serial.println("Not in production mode");
       if (tcpClientConnected) Serial.println("Ongoing connection");
       if (setupMode) Serial.println("In setup mode");
+      if (tcpClientConnectionInProgress) Serial.println("Connection setup in progres");
+      delay(2000);
     } else {
       if (sleepIntervalSetbyHeader > 0){
         Serial.println(String("Using sleep interval set by header \"") + sleepIntervalHeader + "\":" + sleepIntervalSetbyHeader);
@@ -404,6 +408,7 @@ void loop() {
         esp_sleep_enable_timer_wakeup(FactorSeconds * (uint64_t)SleepTime);
       }
       Serial.println("Going to deep sleep now...");
+      Serial.flush();
       esp_deep_sleep_start();
     }
 };
