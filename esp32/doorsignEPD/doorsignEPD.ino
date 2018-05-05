@@ -407,6 +407,11 @@ void loop() {
         int SleepTime = iot.configuration.get("ImageWait").toInt();
         esp_sleep_enable_timer_wakeup(FactorSeconds * (uint64_t)SleepTime);
       }
+      /**
+       *  Allow for external triggering of display refresh using GPIO 15 high.
+       */
+      Serial.println("Setting GPIO 15 for external wakeup...");
+      esp_sleep_enable_ext0_wakeup(GPIO_NUM_15, 1); //1 = High, 0 = Low
       Serial.println("Going to deep sleep now...");
       Serial.flush();
       esp_deep_sleep_start();
