@@ -1,3 +1,7 @@
+# Currently under development
+This project is currently broken due to changes in some dependencies! We are working on a new version on a modern base. There will be a modern web server (served as a docker image too) and optimized code for Platform.io (which has a better dependency manager). Stay tuned!
+
+
 # DoorsignEPD
 Project to build digital doorsign based on ESP32, Waveshare E-Paper-Display (2.9, 4.2 or 7.5 inch). The display can load image from Webserver and uses deep-sleep mode of ESP32 to save energy.
 Images are generated on Webserver running PHP. Examples in this repository generate a weather-station, a doorsign for an office and a doorsign for a conference room.
