@@ -4,7 +4,7 @@
 
 #include <Basecamp.hpp>
 
-// Define your display type here: 2.9, 4.2 (bw and bwr) or 7.5 (bw or bwr) inches are supported:
+// Define your display type here: 2.9, 4.2 (bw, bwr or bwy) or 7.5 (bw, bwr or bwy) inches are supported:
 // Default: 4.2bwr
 #define DISPLAY_TYPE '4.2bwr'
 
@@ -42,33 +42,43 @@ long   sleepIntervalSetbyHeader = 0;                  //* Changed if the sleep i
 
 #if DISPLAY_TYPE == '1.5'
 #include <GxGDEP015OC1/GxGDEP015OC1.cpp>      // 1.54" b/w
-bool hasRed = false;
+bool hasColor = false;
 String displayType = "1.5";
 #endif
 #if DISPLAY_TYPE == '2.9'
 #include <GxGDEH029A1/GxGDEH029A1.cpp>      // 2.9" b/w
-bool hasRed = false;
+bool hasColor = false;
 String displayType = "2.9";
 #endif
 #if DISPLAY_TYPE == '4.2'
 #include <GxGDEW042T2/GxGDEW042T2.cpp>      // 4.2" b/w
-bool hasRed = false;
+bool hasColor = false;
 String displayType = "4.2";
 #endif
 #if DISPLAY_TYPE == '4.2bwr'
 #include <GxGDEW042Z15/GxGDEW042Z15.cpp>       // 4.2" b/w/r
-bool hasRed = true;
+bool hasColor = true;
 String displayType = "4.2bwr";
+#endif
+#if DISPLAY_TYPE == '4.2bwy'
+#include <GxGDEW042Z15/GxGDEW042Z15.cpp>       // 4.2" b/w/y
+bool hasColor = true;
+String displayType = "4.2bwy";
 #endif
 #if DISPLAY_TYPE == '7.5'
 #include <GxGDEW075T8/GxGDEW075T8.cpp>      // 7.5" b/w
-bool hasRed = false;
+bool hasColor = false;
 String displayType = "7.5";
 #endif
 #if DISPLAY_TYPE == '7.5bwr'
 #include <GxGDEW075Z09/GxGDEW075Z09.cpp>      // 7.5" b/w/r
-bool hasRed = true;
+bool hasColor = true;
 String displayType = "7.5bwr";
+#endif
+#if DISPLAY_TYPE == '7.5bwy'
+#include <GxGDEW075Z09/GxGDEW075Z09.cpp>      // 7.5" b/w/y
+bool hasColor = true;
+String displayType = "7.5bwy";
 #endif
 #include <GxIO/GxIO_SPI/GxIO_SPI.cpp>
 #include <GxIO/GxIO.cpp>
@@ -192,7 +202,7 @@ void drawPixels(char *data, size_t len, boolean start){
   Serial.println(String("Printing ") + len + " Bytes to the screen");
   for (size_t i=0; i<len; i++){
 
-    if (hasRed == true) {
+    if (hasColor == true) {
       for (int b = 7; b >= 0; b -= 2) {
         int bit = bitRead(data[i], b);
         int bit2 = bitRead(data[i], b - 1);

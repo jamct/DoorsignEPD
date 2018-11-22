@@ -27,6 +27,7 @@ With Get-Parameter 'scale' you adjust size of the text. Set 'debug' to true to g
 * `door_sign_csv` (list of people working in a room, information taken from a csv file or google spreadsheet)
 * `static_image` (showing a random image (scaled to display size) from server/contents/static_image. Just put your image here)
 * `weather_station` (showing demo temperature an weather with icons)
+* `harry` (simple shoutbox script - allows users to post their own message on the display!)
 
 ## Dependencies
 
@@ -39,4 +40,5 @@ This repository is part of article "Ausdauernde Infotafel" from German computer 
 + add better examples with real data (like ical-calendar)
 
 ## New functions
-Support for red-black-white display!
++ Support for black-white-yellow (bwy) displays! (4.2bwy works, 7.5bwy is untested)
++ Support for red-black-white display!
