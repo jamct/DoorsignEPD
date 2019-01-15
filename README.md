@@ -1,5 +1,10 @@
 # Currently under development
-This project is currently broken due to changes in some dependencies! We are working on a new version on a modern base. There will be a modern web server (served as a docker image too) and optimized code for Platform.io (which has a better dependency manager). Stay tuned!
+We are working on a new version on a modern base. There will be a modern web server (served as a docker image too) and optimized code for Platform.io (which has a better dependency manager). Stay tuned!
+
+# Dependencies
+
+This project depends on the Arduino library `ArduinoJson` which currently
+breaks the build if you use the latest version 6 (cf. [arduinojson.org/v5/doc/](https://arduinojson.org/v5/doc/)). To overcome this issue, downgrade (for example using the Arduino library manager) to the most recent version 5 (currently 5.13.4). Ensure that you do not upgrade to version 6 accidentally via the automatic update function.
 
 
 # DoorsignEPD
