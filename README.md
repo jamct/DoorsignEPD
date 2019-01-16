@@ -1,6 +1,10 @@
 # Currently under development
-This project is currently broken due to changes in some dependencies! We are working on a new version on a modern base. There will be a modern web server (served as a docker image too) and optimized code for Platform.io (which has a better dependency manager). Stay tuned!
+We are working on a new version on a modern base. There will be a modern web server (served as a docker image too) and optimized code for Platform.io (which has a better dependency manager). Stay tuned!
 
+# Dependency: ArduinoJson
+
+This project depends on the Arduino library `ArduinoJson` which currently
+breaks the build if you use the latest version 6 (cf. [arduinojson.org/v5/doc/](https://arduinojson.org/v5/doc/)). To overcome this issue, downgrade (for example using the Arduino library manager) to the most recent version 5 (currently 5.13.4). Ensure that you do not upgrade to version 6 accidentally via the automatic update function.
 
 # DoorsignEPD
 Project to build digital doorsign based on ESP32, Waveshare E-Paper-Display (2.9, 4.2 or 7.5 inch). The display can load image from Webserver and uses deep-sleep mode of ESP32 to save energy.
@@ -30,7 +34,15 @@ With Get-Parameter 'scale' you adjust size of the text. Set 'debug' to true to g
 
 ## Dependencies
 
-- [GxEPD](https://github.com/ZinggJM/GxEPD), [Basecamp](https://github.com/merlinschumacher/Basecamp), [Adafruit_GFX](https://github.com/adafruit/Adafruit-GFX-Library), [AsyncTCP](https://github.com/me-no-dev/AsyncTCP)
+This project depends on the following libraries. Please use the most recent
+stable version -- especially for `GxEPD` and `Basecamp`. GxEPD currently has to
+be downloaded and installed manually. The other library can be installed using
+the Arduino library manager.
+
+* [GxEPD](https://github.com/ZinggJM/GxEPD)
+* [Basecamp](https://github.com/merlinschumacher/Basecamp)
+* [Adafruit_GFX](https://github.com/adafruit/Adafruit-GFX-Library)
+* [AsyncTCP](https://github.com/me-no-dev/AsyncTCP)
 
 ## More information
 This repository is part of article "Ausdauernde Infotafel" from German computer magazine "c't". Link: [ct.de/yrzv](https://ct.de/yrzv)
