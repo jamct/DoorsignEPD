@@ -27,6 +27,7 @@
 		$calendar = VObject\Reader::read( file_get_contents($adress) );
 
 		$heute = new DateTime('2010-11-20');
+		$heute->setTime(00, 00);
 		$kommendeTage = new DateTime('+7 days');
 		$newVCalendar = $calendar->expand( $heute, $kommendeTage );
 		
@@ -51,7 +52,9 @@
 					if($i > 1){
 						$dtstart->modify('+1 day');
 					}
-					$calData[] = [ (string)$dtstart->format('d-m-Y H:i'), (string)$event->summary ];
+					if($dtstart->getTimestamp() >= $heute->getTimestamp() ){
+						$calData[] = [ (string)$dtstart->format('d-m-Y H:i'), (string)$event->summary ];
+					}
 				}	
 
 			}
