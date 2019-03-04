@@ -36,9 +36,10 @@
 	foreach($calendarAdress as $adress) {
 		$calendar = VObject\Reader::read( file_get_contents($adress) );
 
-		$heute = new DateTime('2010-11-20');
-		$kommendeTage = new DateTime('+7 days');
-		$newVCalendar = $calendar->expand( $heute, $kommendeTage );
+		$today = new DateTime();
+		$today->setTime(00, 00);
+		$nextWeek = new DateTime('+7 days');
+		$newVCalendar = $calendar->expand( $today, $nextWeek, new DateTimeZone('Europe/Berlin') );
 		
 		if(!empty($newVCalendar->vevent)){
 			foreach($newVCalendar->vevent as $event) {
@@ -51,18 +52,18 @@
 				
 				if( !empty( $event->dtend ) ){
 					$dtend = new DateTime( (string)$event->dtend );
-					$tageDifferenz = $dtstart->diff( $dtend );
+					$dayDifference = $dtstart->diff( $dtend );
 				}
 				/**
 				 *  A distinction is made here between single and multi-day events.
 				 **/
-				if( empty( $tageDifferenz->days ) ){
-					$iEnde = 1;
+				if( empty( $dayDifference->days ) ){
+					$iEnd = 1;
 				}else{
-					$iEnde = $tageDifferenz->days;
+					$iEnd = $dayDifference->days;
 				}
 				
-				for($i = 1; $i <= $iEnde; $i++){
+				for($i = 1; $i <= $iEnd; $i++){
 					/**
 					 *  The if and the date adjustment are necessary so that
 					 *  events lasting several days are not only displayed on the first day.
