@@ -13,6 +13,22 @@ Images are generated on Webserver running PHP. Examples in this repository gener
 ## Getting started (Client)
 To start, you need the Arduino IDE with dependencies installed. Hardware setup is described here: [ct.de/yrzv](https://ct.de/yrzv).
 
+The example wiring as used in the article is shown in the table below.
+
+
+| Display | ESP32 | Type                                       | Comment                   |
+|:-------:|:-----:|--------------------------------------------|---------------------------|
+|   BUSY  |   4   | GPIO, ESP Input                            | Low active, display busy  |
+|   RST   |   16  | GPIO, ESP Output                           | Low active, reset display |
+|    DC   |   17  | GPIO, Data / Command Selection, ESP Output | High: data, low: command  |
+|    CS   |   5   | GPIO, Chip Select, ESP Output              | Low active                |
+|   CLK   |   18  | SPI, SCK pin (clock)                       | Defined by ESP            |
+|   DIN   |   23  | SPI, MOSI pin                              | Defined by ESP            |
+|   GND   |  GND  | Ground                                     |                           |
+|   3V3   |  3V3  | Supply voltage, 3.3V                       | 8mA refresh, ~5uA standby |
+
+The exact wiring depends on your hardware. Check for each pin (GPIO) if they
+are not occupied by for example LEDs.
 
 ## Getting started (Server)
 The folder 'server' contains examples for content and outputs it in Byte-stream-format for ESP32. Copy the folder on a webserver with PHP installed and GD active (PHP >7.0).
@@ -44,6 +60,23 @@ the Arduino library manager.
 * [Basecamp](https://github.com/merlinschumacher/Basecamp)
 * [Adafruit_GFX](https://github.com/adafruit/Adafruit-GFX-Library)
 * [AsyncTCP](https://github.com/me-no-dev/AsyncTCP)
+
+### Indirect dependencies
+* [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer)
+* [ArduinoJson](https://github.com/bblanchon/ArduinoJson) version 5.x!
+
+### Tested dependencies
+
+This project was tested with the following Library versions:
+
+- GxEPD v3.0.4 from github
+- Basecamp v0.1.8 via Arduino library manager
+- Adafruit_GFX v1.3.6 via Arduino library manager
+- AsyncTCP from github (ac551716aa655672cd3e0f1f2c137a710bccdc42, v1.0.3)
+- ESPAsyncWebServer from github (95dedf7a2df5a0d0ab01725baaacb4f982dedcb2,
+  v1.2.0)
+- ArduinoJson v5.13.4 via Arduino library manager
+- ESP32 Arduino core by espressif: version 1.0.1
 
 ## More information
 This repository is part of article "Ausdauernde Infotafel" from German computer magazine "c't". Link: [ct.de/yrzv](https://ct.de/yrzv)
