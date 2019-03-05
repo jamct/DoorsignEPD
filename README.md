@@ -25,7 +25,7 @@ The example wiring as used in the article is shown in the table below.
 |   CLK   |   18  | SPI, SCK pin (clock)                       | Defined by ESP            |
 |   DIN   |   23  | SPI, MOSI pin                              | Defined by ESP            |
 |   GND   |  GND  | Ground                                     |                           |
-|   3V3   |  3V3  | Voltage supply, 3.3V                       | 8mA refresh, ~5uA standby |
+|   3V3   |  3V3  | Supply voltage, 3.3V                       | 8mA refresh, ~5uA standby |
 
 The exact wiring depends on your hardware. Check for each pin (GPIO) if they
 are not occupied by for example LEDs.
