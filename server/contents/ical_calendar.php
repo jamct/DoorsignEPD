@@ -16,7 +16,7 @@
 	 *  https://github.com/sabre-io/vobject
 	 *  Here you can find the vobject Library. This is necessary to process the ical calendar.
 	 **/
-	require 'vobject/vendor/autoload.php';
+	require 'vendor/autoload.php';
 	use
 		Sabre\VObject;
 
@@ -26,8 +26,6 @@
 	 * https://username:passwort@mydomain.net/owncloud/remote.php/dav/calendars/username/personal?export
 	 * This example show you how to import a calendar form owncloud with name "personal"
 	 * You must replace username and passwort with real data
-	 * http://evertpot.com/resources/files/posts/icalendartest.ics
-	 * This is an example from the former maintainer of the sabre project.
 	 *
 	 * Here you can insert more then one calendar / ical file
 	 **/

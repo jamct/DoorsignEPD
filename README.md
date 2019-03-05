@@ -31,7 +31,7 @@ With Get-Parameter 'scale' you adjust size of the text. Set 'debug' to true to g
 * `door_sign_csv` (list of people working in a room, information taken from a csv file or google spreadsheet)
 * `static_image` (showing a random image (scaled to display size) from server/contents/static_image. Just put your image here)
 * `weather_station` (showing demo temperature an weather with icons)
-* `ical_calendar` (showing demo Calendar | https://github.com/sabre-io/vobject is requred)
+* `ical_calendar` (showing demo Calendar with 7.5-Display and portrait orientation | https://github.com/sabre-io/vobject is requred)
 
 ## Dependencies
 
