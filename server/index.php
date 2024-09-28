@@ -1,13 +1,14 @@
 <?php
 //To activate productionMode (display entering deep sleep), set http-header X-productionMode: true
-#header("X-productionMode: true");
+//header("X-productionMode: true");
 //To stop productionMode (no deep sleep, web config), set http-header X-productionMode: false
-#header("X-productionMode: false");
+header("X-productionMode: false");
 
-// Set the sleep interval for the doorsigns via the server
-#header("X-sleepInterval: 60 ");
+//error_reporting('E_ERROR');
 
-error_reporting('E_ERROR');
+// Enable to show errors for debugging PHP
+//error_reporting(E_ALL);
+//ini_set('display_errors', 'On');
 # Supported displays:
 # 1.54 inches: https://www.waveshare.com/wiki/1.54inch_e-Paper_Module
 # 2.9 inches: https://www.waveshare.com/wiki/2.9inch_e-Paper_Module
@@ -87,8 +88,10 @@ if(!count($contents)){
 foreach ($contents as $content) {
     $contentFile = pathinfo("contents/".$content);
 
-    if($contentFile['extension'] == "php"){
-    $allContents[$contentFile['filename']] = "contents/".$content;
+    if (array_key_exists('extension', $contentFile)) {
+        if($contentFile['extension'] == "php"){
+            $allContents[$contentFile['filename']] = "contents/".$content;
+        }
     }
 }
 

@@ -42,8 +42,11 @@
         $height = ($maxW / $width) * $height;
         $width = $maxW;
     }
+
+    $width = (int)round($width);
+    $height = (int)round($height);
     $imageNew = imagecreate($displayWidth, $displayHeight);
     imagecopyresampled($imageNew, $imageSource, 0, 0, 0, 0, $width, $height, $origW, $origH);
     imagecopymerge($im, $imageNew, 0, 0, 0, 0, $displayWidth, $displayHeight,100);
-    imagedestroy($imagenew);
+    imagedestroy($imageNew);
 ?>

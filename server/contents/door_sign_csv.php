@@ -36,11 +36,7 @@
 
 
 // We need to provide the "room" parameter to use one csv file for several rooms
-    if (strlen($_GET['room'])){
-            $room = $_GET['room'];
-    }else{
-            $room = "A 111";
-    }
+    $room = isset($_GET['room']) ? $_GET['room'] : "A 111";
 
 // Read the CSV file with the rooms
     if(!ini_set('default_socket_timeout', 15)) echo "<!-- unable to change socket timeout -->";
@@ -72,8 +68,10 @@
 
     $fontSize = $scale;
 
+    $cursorY = 0;
+
     // Room number
-    $cursorY += $fontSize*1.4;
+    $cursorY += (int)round($fontSize*1.4);
     imagettftext($im, $fontSize, 0, 10, $cursorY, $red, $DEFAULT_FONT['bold'], $room);
 
     // Add logo
@@ -84,20 +82,20 @@
     imageline ($im , 10 , $cursorY , $displayWidth - 20 , $cursorY , $black );
 
     // Print all persons in the room
-    $fontSize = 0.5*$scale;
+    $fontSize = (int)round(0.5*$scale);
     foreach($persons as $person){
-        $cursorY = $cursorY+$fontSize*1.5;
+        $cursorY = (int) round($cursorY+$fontSize*1.5);
         imagettftext($im, $fontSize, 0, 20, $cursorY, $black, $DEFAULT_FONT['bold'], $person[0] );
-        imagettftext($im, $fontSize*0.6, 0, $displayWidth - 90, $cursorY, $black, $DEFAULT_FONT['regular'], $person[3]);
-        $cursorY = $cursorY+$fontSize*1.5;
-        imagettftext($im, $fontSize*0.8, 0, 20, $cursorY, $black, $DEFAULT_FONT['regular'], "@" );
-        imagettftext($im, $fontSize*0.8, 0, 60, $cursorY, $black, $DEFAULT_FONT['regular'], $person[1]);
-        $cursorY = $cursorY+$fontSize*1.5;
-        imagettftext($im, $fontSize*0.8, 0, 20, $cursorY, $black, $DEFAULT_FONT['emoji'],"&#9742;");
+        imagettftext($im, (int)round($fontSize*0.6), 0, $displayWidth - 90, $cursorY, $black, $DEFAULT_FONT['regular'], $person[3]);
+        $cursorY = (int)round($cursorY+$fontSize*1.5);
+        imagettftext($im, (int)round($fontSize*0.8), 0, 20, $cursorY, $black, $DEFAULT_FONT['regular'], "@" );
+        imagettftext($im, (int)round($fontSize*0.8), 0, 60, $cursorY, $black, $DEFAULT_FONT['regular'], $person[1]);
+        $cursorY = (int)round($cursorY+$fontSize*1.5);
+        imagettftext($im, (int)round($fontSize*0.8), 0, 20, $cursorY, $black, $DEFAULT_FONT['emoji'],"&#9742;");
 
-        imagettftext($im, $fontSize*0.8, 0, 60, $cursorY, $black, $DEFAULT_FONT['regular'], $person[2]);
-        $cursorY = $cursorY+$fontSize*0.6;
+        imagettftext($im, (int)round($fontSize*0.8), 0, 60, $cursorY, $black, $DEFAULT_FONT['regular'], $person[2]);
+        $cursorY = (int)round($cursorY+$fontSize*0.6);
 
     }
-    imagettftext($im, $fontSize*0.5, 0, $displayWidth - 90, $displayHeight - 8, $black, $DEFAULT_FONT['regular'], date("Y-m-d H:i"));
+    imagettftext($im, (int)round($fontSize*0.5), 0, $displayWidth - 90, $displayHeight - 8, $black, $DEFAULT_FONT['regular'], date("Y-m-d H:i"));
 ?>
