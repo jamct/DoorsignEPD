@@ -96,11 +96,12 @@ $selectedContent = $allContents[$_GET['content']];
 
 $displayWidth = explode("x",DISPLAYS[$displayType]['size'])[0];
 $displayHeight = explode("x",DISPLAYS[$displayType]['size'])[1];
-$im = imagecreate($displayWidth, $displayHeight);
+$im = imagecreatetruecolor($displayWidth, $displayHeight);
 $background_color = ImageColorAllocate ($im, 255, 255, 255);
 $black = ImageColorAllocate($im, 0, 0, 0);
 $red = ImageColorAllocate($im, 0xFF, 0x00, 0x00);
 
+imagefill($im, 0, 0, $background_color);
 
 if(is_file($selectedContent)){
     include($selectedContent);

@@ -45,7 +45,8 @@
 
     $width = (int)round($width);
     $height = (int)round($height);
-    $imageNew = imagecreate($displayWidth, $displayHeight);
+    $imageNew = imagecreatetruecolor($displayWidth, $displayHeight);
+    imagefill($imageNew, 0, 0, $background_color);
     imagecopyresampled($imageNew, $imageSource, 0, 0, 0, 0, $width, $height, $origW, $origH);
     imagecopymerge($im, $imageNew, 0, 0, 0, 0, $displayWidth, $displayHeight,100);
     imagedestroy($imageNew);
