@@ -4,11 +4,11 @@
 //To stop productionMode (no deep sleep, web config), set http-header X-productionMode: false
 header("X-productionMode: false");
 
-//error_reporting('E_ERROR');
-
 // Enable to show errors for debugging PHP
-//error_reporting(E_ALL);
-//ini_set('display_errors', 'On');
+#ini_set('display_errors', 'On');
+#ini_set('log_errors', 'On');
+#error_reporting(E_ALL);
+
 # Supported displays:
 # 1.54 inches: https://www.waveshare.com/wiki/1.54inch_e-Paper_Module
 # 2.9 inches: https://www.waveshare.com/wiki/2.9inch_e-Paper_Module
@@ -60,13 +60,10 @@ function checkFreeType(){
     }
 }
 
-if(strlen($_GET['scale']) AND is_numeric($_GET['scale'])){
-    $scale = $_GET['scale'];
-}else{
-    $scale = $_GET['scale'] = 32;
-}
 
-$displayType = $_GET['display'];
+$scale = (isset($_GET['scale']) AND is_numeric($_GET['scale'])) ? $_GET['scale'] : 32;
+
+$displayType = isset($_GET['display'])? $_GET['display']:null;
 if(!isset(DISPLAYS[$displayType])){
     echo ("Not a valid display size. <br />");
     echo ("display=[");
@@ -114,7 +111,7 @@ if(is_file($selectedContent)){
 }
 
 
-if($_GET['debug'] == 'true'){
+if(isset($_GET['debug']) AND $_GET['debug'] == 'true'){
     header("Content-type: image/png");
     imagepng($im);
 }
@@ -128,7 +125,10 @@ else{
     //$im = imagerotate($im, 180, 0);
     //$im = imagerotate($im, 180, 0);
 
-    echo rawImage($im, DISPLAYS[$displayType]['red'] );
+    echo rawImage(
+        $im,
+        isset(DISPLAYS[$displayType]['red'])? DISPLAYS[$displayType]['red'] : false
+    );
 }
 
 imagedestroy($im);
