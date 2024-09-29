@@ -1,13 +1,14 @@
 <?php
 //To activate productionMode (display entering deep sleep), set http-header X-productionMode: true
-#header("X-productionMode: true");
+//header("X-productionMode: true");
 //To stop productionMode (no deep sleep, web config), set http-header X-productionMode: false
-#header("X-productionMode: false");
+header("X-productionMode: false");
 
-// Set the sleep interval for the doorsigns via the server
-#header("X-sleepInterval: 60 ");
+// Enable to show errors for debugging PHP
+#ini_set('display_errors', 'On');
+#ini_set('log_errors', 'On');
+#error_reporting(E_ALL);
 
-error_reporting('E_ERROR');
 # Supported displays:
 # 1.54 inches: https://www.waveshare.com/wiki/1.54inch_e-Paper_Module
 # 2.9 inches: https://www.waveshare.com/wiki/2.9inch_e-Paper_Module
@@ -59,13 +60,10 @@ function checkFreeType(){
     }
 }
 
-if(strlen($_GET['scale']) AND is_numeric($_GET['scale'])){
-    $scale = $_GET['scale'];
-}else{
-    $scale = $_GET['scale'] = 32;
-}
 
-$displayType = $_GET['display'];
+$scale = (isset($_GET['scale']) AND is_numeric($_GET['scale'])) ? $_GET['scale'] : 32;
+
+$displayType = isset($_GET['display'])? $_GET['display']:null;
 if(!isset(DISPLAYS[$displayType])){
     echo ("Not a valid display size. <br />");
     echo ("display=[");
@@ -87,8 +85,10 @@ if(!count($contents)){
 foreach ($contents as $content) {
     $contentFile = pathinfo("contents/".$content);
 
-    if($contentFile['extension'] == "php"){
-    $allContents[$contentFile['filename']] = "contents/".$content;
+    if (array_key_exists('extension', $contentFile)) {
+        if($contentFile['extension'] == "php"){
+            $allContents[$contentFile['filename']] = "contents/".$content;
+        }
     }
 }
 
@@ -96,11 +96,12 @@ $selectedContent = $allContents[$_GET['content']];
 
 $displayWidth = explode("x",DISPLAYS[$displayType]['size'])[0];
 $displayHeight = explode("x",DISPLAYS[$displayType]['size'])[1];
-$im = imagecreate($displayWidth, $displayHeight);
+$im = imagecreatetruecolor($displayWidth, $displayHeight);
 $background_color = ImageColorAllocate ($im, 255, 255, 255);
 $black = ImageColorAllocate($im, 0, 0, 0);
 $red = ImageColorAllocate($im, 0xFF, 0x00, 0x00);
 
+imagefill($im, 0, 0, $background_color);
 
 if(is_file($selectedContent)){
     include($selectedContent);
@@ -111,7 +112,7 @@ if(is_file($selectedContent)){
 }
 
 
-if($_GET['debug'] == 'true'){
+if(isset($_GET['debug']) AND $_GET['debug'] == 'true'){
     header("Content-type: image/png");
     imagepng($im);
 }
@@ -125,7 +126,10 @@ else{
     //$im = imagerotate($im, 180, 0);
     //$im = imagerotate($im, 180, 0);
 
-    echo rawImage($im, DISPLAYS[$displayType]['red'] );
+    echo rawImage(
+        $im,
+        isset(DISPLAYS[$displayType]['red'])? DISPLAYS[$displayType]['red'] : false
+    );
 }
 
 imagedestroy($im);
